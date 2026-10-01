@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#03050a] text-slate-100 select-none">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>METRO COMMANDER SCADA OS // TACTICAL CONSOLE v5.0</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=JetBrains+Mono:wght@400;700;800&family=Orbitron:wght@600;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#03050a',
+                            panel: '#080d1a',
+                            panelHeader: '#0e162b',
+                            border: '#1a2744',
+                            borderBright: '#2c4375',
+                            cyan: '#00f0ff',
+                            magenta: '#ff0055',
+                            green: '#00ff66',
+                            amber: '#ffaa00',
+                            purple: '#b026ff',
+                            dim: '#51658c'
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        jetbrains: ['JetBrains Mono', 'monospace'],
+                        mono: ['Share Tech Mono', 'monospace'],
+                        fira: ['Fira Code', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --neon-cyan: #00f0ff;
+            --neon-green: #00ff66;
+            --neon-amber: #ffaa00;
+            --neon-magenta: #ff0055;
+            --neon-purple: #b026ff;
+        }
+
+        body {
+            background-color: #03050a;
+            color: #d1dcfa;
+            font-family: 'Share Tech Mono', monospace;
+            overflow: hidden;
+        }
+
+        /* CRT Raster Line Overlay */
+        .crt-overlay {
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.4) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.03),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.03)
+            );
+            background-size: 100% 3px, 5px 100%;
+            pointer-events: none;
+        }
+
+        /* Sci-Fi Grid Background */
+        .cyber-grid {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(26, 39, 68, 0.3) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(26, 39, 68, 0.3) 1px, transparent 1px);
+        }
+
+        /* Industrial Beveled Panel Borders */
+        .cyber-panel {
+            background: rgba(8, 13, 26, 0.93);
+            backdrop-filter: blur(10px);
+            border: 1px solid #1a2744;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.06);
+            border-radius: 4px;
+            position: relative;
+        }
+        .cyber-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+            opacity: 0.4;
+        }
+
+        /* TACTICAL HARDWARE CONTROLS */
+
+        /* Mechanical Industrial Pushbuttons */
+        .tactical-btn {
+            background: linear-gradient(180deg, #1b2640 0%, #0c1221 100%);
+            border: 1px solid #2e416d;
+            box-shadow: 0 4px 0 #070a14, inset 0 1px 0 rgba(255,255,255,0.15);
+            color: #d1dcfa;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.08s ease;
+            position: relative;
+            user-select: none;
+        }
+        .tactical-btn:hover {
+            border-color: #00f0ff;
+            color: #00f0ff;
+            box-shadow: 0 4px 0 #070a14, 0 0 10px rgba(0,240,255,0.3);
+        }
+        .tactical-btn:active, .tactical-btn.btn-pressed {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #070a14, inset 0 2px 4px rgba(0,0,0,0.8);
+            background: linear-gradient(180deg, #0c1221 0%, #1b2640 100%);
+        }
+
+        .tactical-btn-danger {
+            background: linear-gradient(180deg, #6e0d25 0%, #31040f 100%);
+            border-color: #ff0055;
+            color: #ff99b8;
+            box-shadow: 0 4px 0 #180207, inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+        .tactical-btn-danger:hover {
+            color: #ffffff;
+            box-shadow: 0 4px 0 #180207, 0 0 15px rgba(255,0,85,0.6);
+        }
+
+        .tactical-btn-amber {
+            background: linear-gradient(180deg, #5e3b08 0%, #291802 100%);
+            border-color: #ffaa00;
+            color: #ffdd99;
+        }
+        .tactical-btn-amber:hover {
+            color: #ffffff;
+            box-shadow: 0 4px 0 #0d0700, 0 0 12px rgba(255,170,0,0.5);
+        }
+
+        /* Safety Cover Toggle Switches */
+        .toggle-switch {
+            position: relative;
+            width: 52px;
+            height: 28px;
+            background: #060912;
+            border: 2px solid #1a2744;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(180deg, #425887 0%, #1c2842 100%);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.6);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .toggle-switch.active {
+            background: #022010;
+            border-color: #00ff66;
+            box-shadow: 0 0 10px rgba(0,255,102,0.3);
+        }
+        .toggle-switch.active::after {
+            left: 26px;
+            background: linear-gradient(180deg, #00ff66 0%, #00993d 100%);
+            box-shadow: 0 0 8px #00ff66;
+        }
+
+        /* Safety Shield Lid Cover Toggle */
+        .safety-cover-box {
+            background: #080b14;
+            border: 1px solid #ff0055;
+            position: relative;
+        }
+        .safety-lid {
+            background: repeating-linear-gradient(
+                -45deg,
+                rgba(255,0,85,0.2),
+                rgba(255,0,85,0.2) 8px,
+                rgba(10,14,26,0.9) 8px,
+                rgba(10,14,26,0.9) 16px
+            );
+            border-bottom: 2px solid #ff0055;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: top;
+            cursor: pointer;
+        }
+        .safety-lid.open {
+            transform: rotateX(100deg);
+        }
+
+        /* Rotary Knob Component */
+        .rotary-knob-container {
+            position: relative;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #19243b 0%, #080d19 70%);
+            border: 2px solid #2c4375;
+            box-shadow: inset 0 2px 5px rgba(255,255,255,0.1), 0 4px 8px rgba(0,0,0,0.7);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .rotary-pointer {
+            width: 4px;
+            height: 24px;
+            background: #00f0ff;
+            position: absolute;
+            top: 6px;
+            border-radius: 2px;
+            box-shadow: 0 0 8px #00f0ff;
+            transform-origin: 50% 26px;
+            transition: transform 0.15s ease-out;
+        }
+
+        /* Slider Range Control Overhaul */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type=range]:focus { outline: none; }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            background: #080d1a;
+            border: 1px solid #1a2744;
+            border-radius: 4px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 12px;
+            border-radius: 2px;
+            background: linear-gradient(180deg, #00f0ff 0%, #007780 100%);
+            border: 1px solid #ffffff;
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 0 8px rgba(0,240,255,0.8);
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #04060d; }
+        ::-webkit-scrollbar-thumb { background: #1f2f52; border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00f0ff; }
+
+        /* Pulse LEDs */
+        .led-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .led-green { background: #00ff66; box-shadow: 0 0 8px #00ff66; }
+        .led-amber { background: #ffaa00; box-shadow: 0 0 8px #ffaa00; }
+        .led-red { background: #ff0055; box-shadow: 0 0 8px #ff0055; }
+        .led-off { background: #1a2336; box-shadow: none; }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col bg-cyber-bg cyber-grid relative">
+
+    <div id="crt-layer" class="crt-overlay fixed inset-0 z-50 pointer-events-none"></div>
+
+    <!-- MAIN SYSTEM HEADER CONSOLE BAR -->
+    <header class="h-12 bg-cyber-panelHeader border-b border-cyber-border flex items-center justify-between px-4 z-40 relative shadow-2xl">
+        <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2.5">
+                <div class="w-3.5 h-3.5 bg-cyber-cyan rounded-sm shadow-[0_0_12px_#00f0ff] animate-pulse"></div>
+                <span class="font-orbitron font-black text-base tracking-widest text-white">METRO<span class="text-cyber-cyan">-COMMANDER</span></span>
+                <span class="text-xs font-mono px-1.5 py-0.5 bg-cyber-cyan/10 border border-cyber-cyan/40 text-cyber-cyan rounded">SCADA OS v5.0</span>
+            </div>
+            <div class="h-5 w-[1px] bg-cyber-border"></div>
+            <span class="text-xs text-cyber-dim font-mono hidden lg:inline"><i class="fa-solid fa-shield-halved text-cyber-green mr-1"></i> SECTOR 07 TRANSIT OPERATIONS CENTER</span>
+        </div>
+
+        <!-- Telemetry Summary Badges -->
+        <div class="flex items-center space-x-6 text-xs font-mono">
+            <div class="flex items-center space-x-2 bg-[#050812] px-2.5 py-1 rounded border border-cyber-border">
+                <span class="text-cyber-dim">SYSTEM STATUS:</span>
+                <span class="led-dot led-green"></span>
+                <span class="text-cyber-green font-bold tracking-wide" id="hdr-sys-status">NOMINAL</span>
+            </div>
+            <div class="flex items-center space-x-2 hidden md:flex bg-[#050812] px-2.5 py-1 rounded border border-cyber-border">
+                <span class="text-cyber-dim">ACTIVE FLEETS:</span>
+                <span class="text-white font-bold font-fira" id="hdr-fleet-count">08/08</span>
+            </div>
+            <div class="flex items-center space-x-2 hidden md:flex bg-[#050812] px-2.5 py-1 rounded border border-cyber-border">
+                <span class="text-cyber-dim">POWER GRID:</span>
+                <span class="text-cyber-amber font-bold" id="hdr-power-val">750V DC [BALANCED]</span>
+            </div>
+
+            <!-- Global Utility Toggles -->
+            <div class="flex items-center space-x-2">
+                <button onclick="toggleCRT()" id="btn-crt" class="tactical-btn px-2.5 py-1 text-xs font-mono flex items-center gap-1.5">
+                    <i class="fa-solid fa-desktop text-cyber-cyan"></i>
+                    <span>CRT</span>
+                </button>
+                <button onclick="toggleAudio()" id="btn-audio" class="tactical-btn px-2.5 py-1 text-xs font-mono flex items-center gap-1.5">
+                    <i class="fa-solid fa-volume-xmark text-cyber-magenta" id="audio-icon"></i>
+                    <span id="audio-txt">SFX: OFF</span>
+                </button>
+            </div>
+
+            <div class="font-jetbrains text-lg text-cyber-cyan tracking-wider font-bold bg-[#03050c] px-3 py-0.5 border border-cyber-borderBright rounded shadow-inner" id="live-clock">
+                11:11:30 AM
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN MULTI-MONITOR DASHBOARD WORKSPACE -->
+    <main class="flex-1 p-2.5 grid grid-cols-12 gap-2.5 overflow-hidden relative">
+
+        <!-- LEFT COLUMN: TACTICAL SCADA HARDWARE SWITCHBOARD & CONTROLS (3 Cols) -->
+        <section class="col-span-12 lg:col-span-3 flex flex-col gap-2.5 overflow-y-auto pr-0.5">
+            
+            <!-- PANEL 1: INDUSTRIAL HARDWARE SWITCHBOARD -->
+            <div class="cyber-panel p-3 flex flex-col gap-3">
+                <div class="flex items-center justify-between border-b border-cyber-border pb-2">
+                    <span class="font-orbitron font-bold text-xs text-cyber-cyan tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-cyber-cyan"></i>
+                        HARDWARE_SWITCHBOARD.SYS
+                    </span>
+                    <span class="led-dot led-green"></span>
+                </div>
+
+                <!-- Heavy Safety Switch with Lid -->
+                <div class="bg-[#050812] p-2.5 border border-cyber-border rounded flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-bold text-white">TRACK DE-ENERGIZE</div>
+                        <div class="text-[10px] text-cyber-dim">3rd Rail Main Breaker</div>
+                    </div>
+                    <div class="safety-cover-box p-1 rounded">
+                        <div id="safety-lid-1" class="safety-lid absolute inset-0 z-10 flex items-center justify-center text-[9px] font-bold text-cyber-magenta tracking-tighter" onclick="toggleSafetyLid('safety-lid-1')">
+                            LIFT SAFETY COVER
+                        </div>
+                        <div class="toggle-switch" id="switch-track-power" onclick="toggleSwitch('switch-track-power', onTrackPowerToggle)"></div>
+                    </div>
+                </div>
+
+                <!-- Toggle Matrix Row -->
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="bg-[#050812] p-2 border border-cyber-border rounded flex flex-col justify-between">
+                        <span class="text-[11px] text-cyber-dim font-bold">SIGNAL INTERLOCK</span>
+                        <div class="flex items-center justify-between mt-2">
+                            <span class="text-[10px] text-cyber-green font-bold" id="lbl-interlock">AUTO</span>
+                            <div class="toggle-switch active" id="sw-interlock" onclick="toggleSwitch('sw-interlock', onInterlockToggle)"></div>
+                        </div>
+                    </div>
+                    <div class="bg-[#050812] p-2 border border-cyber-border rounded flex flex-col justify-between">
+                        <span class="text-[11px] text-cyber-dim font-bold">VENT PURGE AIR</span>
+                        <div class="flex items-center justify-between mt-2">
+                            <span class="text-[10px] text-cyber-amber font-bold" id="lbl-purge">STANDBY</span>
+                            <div class="toggle-switch" id="sw-purge" onclick="toggleSwitch('sw-purge', onPurgeToggle)"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Industrial Rotary Dial Selector -->
+                <div class="bg-[#050812] p-2.5 border border-cyber-border rounded flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-bold text-white">CATENARY VOLTAGE</div>
+                        <div class="text-[10px] text-cyber-dim" id="dial-mode-text">MODE 2 // 750V REGULATED</div>
+                    </div>
+                    <div class="rotary-knob-container" onclick="rotateDial()">
+                        <div class="rotary-pointer" id="rotary-pointer" style="transform: rotate(0deg);"></div>
+                    </div>
+                </div>
+
+                <!-- Tactical Slider Fader Override -->
+                <div class="bg-[#050812] p-2.5 border border-cyber-border rounded space-y-1.5">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-cyber-dim">FLEET SPEED LIMITER</span>
+                        <span class="text-cyber-cyan font-bold font-fira" id="slider-val">80 KM/H</span>
+                    </div>
+                    <input type="range" min="20" max="120" value="80" class="w-full" id="speed-slider" oninput="updateSpeedSlider(this.value)">
+                    <div class="flex justify-between text-[9px] text-cyber-dim">
+                        <span>20 KM/H</span>
+                        <span>RESTRICTED</span>
+                        <span>120 KM/H</span>
+                    </div>
+                </div>
+
+                <!-- Tactical Action Pushbuttons Bank -->
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                    <button onclick="triggerEmergencyStop()" class="tactical-btn tactical-btn-danger py-2 px-2 text-xs font-orbitron font-bold flex flex-col items-center justify-center gap-1">
+                        <i class="fa-solid fa-ban text-sm"></i>
+                        <span>E-STOP ALL</span>
+                    </button>
+                    <button onclick="triggerSignalOverride()" class="tactical-btn tactical-btn-amber py-2 px-2 text-xs font-orbitron font-bold flex flex-col items-center justify-center gap-1">
+                        <i class="fa-solid fa-triangle-exclamation text-sm"></i>
+                        <span>SIG OVERRIDE</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- PANEL 2: SIGNAL STATUS MATRIX BOARD -->
+            <div class="cyber-panel p-3 flex-1 flex flex-col justify-between">
+                <div class="flex items-center justify-between border-b border-cyber-border pb-2">
+                    <span class="font-orbitron font-bold text-xs text-cyber-amber tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-traffic-light text-cyber-amber"></i>
+                        LINE_SIGNAL_MATRIX.LED
+                    </span>
+                    <span class="text-[10px] text-cyber-dim font-mono">SECTOR LOCKS</span>
+                </div>
+
+                <!-- LED Status Rows -->
+                <div class="space-y-2 py-2 text-xs font-mono">
+                    <div class="flex items-center justify-between bg-[#050812] p-2 border border-cyber-border rounded">
+                        <span>RED LINE 01:</span>
+                        <div class="flex items-center space-x-1.5">
+                            <span class="led-dot led-green" id="led-r1"></span>
+                            <span class="led-dot led-off" id="led-r2"></span>
+                            <span class="text-[10px] text-cyber-green font-bold ml-1">CLEAR</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between bg-[#050812] p-2 border border-cyber-border rounded">
+                        <span>CYAN LINE 02:</span>
+                        <div class="flex items-center space-x-1.5">
+                            <span class="led-dot led-green"></span>
+                            <span class="led-dot led-off"></span>
+                            <span class="text-[10px] text-cyber-green font-bold ml-1">CLEAR</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between bg-[#050812] p-2 border border-cyber-border rounded">
+                        <span>YELLOW LOOP 03:</span>
+                        <div class="flex items-center space-x-1.5">
+                            <span class="led-dot led-off"></span>
+                            <span class="led-dot led-amber"></span>
+                            <span class="text-[10px] text-cyber-amber font-bold ml-1">CAUTION</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between bg-[#050812] p-2 border border-cyber-border rounded">
+                        <span>PURPLE EXPRESS 04:</span>
+                        <div class="flex items-center space-x-1.5">
+                            <span class="led-dot led-green"></span>
+                            <span class="led-dot led-off"></span>
+                            <span class="text-[10px] text-cyber-green font-bold ml-1">CLEAR</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="pingAllSignals()" class="tactical-btn w-full py-1.5 text-xs font-orbitron text-cyber-cyan flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-satellite-dish"></i> RE-PING SIGNAL INTERLOCKS
+                </button>
+            </div>
+        </section>
+
+        <!-- CENTER COLUMN: MAIN VECTOR RAIL TOPOLOGY MONITOR MAP (6 Cols) -->
+        <section class="col-span-12 lg:col-span-6 flex flex-col gap-2.5">
+            <div class="cyber-panel flex-1 flex flex-col overflow-hidden min-h-[420px]">
+                <div class="bg-cyber-panelHeader px-3 py-2 border-b border-cyber-border flex justify-between items-center">
+                    <div class="flex items-center space-x-2 text-xs font-orbitron font-bold text-cyber-cyan tracking-wider">
+                        <i class="fa-solid fa-network-wired text-cyber-cyan"></i>
+                        <span>METRO_TOPOLOGY_VECTOR_GRID.MAP</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button class="tactical-btn px-2 py-0.5 text-[10px] font-mono text-cyber-green" onclick="centerRailMap()"><i class="fa-solid fa-crosshairs"></i> RE-CENTER</button>
+                        <button class="tactical-btn px-2 py-0.5 text-[10px] font-mono text-cyber-amber" onclick="toggleMapGrid()"><i class="fa-solid fa-border-all"></i> GRID</button>
+                    </div>
+                </div>
+
+                <div class="relative flex-1 bg-[#02040a] overflow-hidden" id="rail-container">
+                    <canvas id="railCanvas" class="w-full h-full block cursor-crosshair"></canvas>
+
+                    <!-- Overlay Live Dispatch HUD Badge -->
+                    <div class="absolute top-3 left-3 bg-[#050914]/90 border border-cyber-border p-2.5 rounded text-xs backdrop-blur pointer-events-none">
+                        <div class="text-white font-orbitron text-[11px] font-bold mb-1 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-cyber-green animate-ping"></span> REAL-TIME VECTOR TOPOLOGY
+                        </div>
+                        <div class="text-cyber-dim font-mono text-[10px] space-y-0.5">
+                            <div>MAP MODE: <span class="text-cyber-cyan">INTERLOCK ACTIVE</span></div>
+                            <div>SWITCH JUNCTIONS: <span class="text-cyber-green">12 LOCKED</span></div>
+                            <div>CLICK TRAIN/STATION FOR TELEMETRY</div>
+                        </div>
+                    </div>
+
+                    <!-- Inspector Drawer Slide-in Panel -->
+                    <div id="inspector-drawer" class="absolute bottom-3 left-3 right-3 bg-[#080e1c]/95 border border-cyber-cyan p-3 rounded shadow-2xl transition-all duration-300 transform translate-y-[150%] z-30">
+                        <div class="flex justify-between items-center border-b border-cyber-border pb-1.5 mb-2">
+                            <span class="font-orbitron font-bold text-xs text-cyber-cyan flex items-center gap-2" id="drawer-title">
+                                <i class="fa-solid fa-microchip"></i> TELEMETRY INSPECTOR
+                            </span>
+                            <button onclick="closeDrawer()" class="tactical-btn px-2 py-0.5 text-[10px] text-cyber-magenta">✕ CLOSE</button>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-xs font-mono" id="drawer-body">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOWER CENTER: POWER SCADA GAUGES & METERS -->
+            <div class="cyber-panel p-3 h-48 flex flex-col justify-between">
+                <div class="flex justify-between items-center border-b border-cyber-border pb-1.5">
+                    <span class="font-orbitron font-bold text-xs text-cyber-green tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-bolt text-cyber-green"></i>
+                        POWER_GRID_SUBSTATION.SCADA
+                    </span>
+                    <span class="text-[10px] text-cyber-dim font-mono">FEEDER 750V DC</span>
+                </div>
+
+                <!-- 4 SVG Radial Gauges Grid -->
+                <div class="grid grid-cols-4 gap-2 h-28 my-auto">
+                    <!-- Gauge 1 -->
+                    <div class="bg-[#050812] border border-cyber-border p-1.5 rounded flex flex-col items-center justify-between">
+                        <span class="text-[9px] font-orbitron text-cyber-cyan font-bold">FREQUENCY</span>
+                        <canvas id="gauge1" width="60" height="60"></canvas>
+                        <span id="g1-val" class="font-jetbrains text-xs text-cyber-green font-bold">60.0 Hz</span>
+                    </div>
+                    <!-- Gauge 2 -->
+                    <div class="bg-[#050812] border border-cyber-border p-1.5 rounded flex flex-col items-center justify-between">
+                        <span class="text-[9px] font-orbitron text-cyber-green font-bold">CATENARY KV</span>
+                        <canvas id="gauge2" width="60" height="60"></canvas>
+                        <span id="g2-val" class="font-jetbrains text-xs text-cyber-green font-bold">0.75 kV</span>
+                    </div>
+                    <!-- Gauge 3 -->
+                    <div class="bg-[#050812] border border-cyber-border p-1.5 rounded flex flex-col items-center justify-between">
+                        <span class="text-[9px] font-orbitron text-cyber-amber font-bold">TRACTION MW</span>
+                        <canvas id="gauge3" width="60" height="60"></canvas>
+                        <span id="g3-val" class="font-jetbrains text-xs text-cyber-amber font-bold">14.2 MW</span>
+                    </div>
+                    <!-- Gauge 4 -->
+                    <div class="bg-[#050812] border border-cyber-border p-1.5 rounded flex flex-col items-center justify-between">
+                        <span class="text-[9px] font-orbitron text-cyber-magenta font-bold">TRACK LOAD</span>
+                        <canvas id="gauge4" width="60" height="60"></canvas>
+                        <span id="g4-val" class="font-jetbrains text-xs text-cyber-magenta font-bold">78 %</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RIGHT COLUMN: MULTI-MODE CCTV & EVENT LOG TERMINAL (3 Cols) -->
+        <section class="col-span-12 lg:col-span-3 flex flex-col gap-2.5 overflow-y-auto pl-0.5">
+            
+            <!-- PANEL 1: MULTI-MODE CCTV MONITOR -->
+            <div class="cyber-panel p-3 flex flex-col gap-2">
+                <div class="flex justify-between items-center border-b border-cyber-border pb-1.5">
+                    <span class="font-orbitron font-bold text-xs text-cyber-magenta tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-video text-cyber-magenta"></i>
+                        CCTV_SURVEILLANCE_DECK
+                    </span>
+                    <span class="led-dot led-red"></span>
+                </div>
+
+                <div class="relative h-44 bg-black border border-cyber-border rounded overflow-hidden">
+                    <canvas id="cctvCanvas" class="w-full h-full block"></canvas>
+
+                    <!-- CCTV Overlay Controls & Text -->
+                    <div class="absolute top-1.5 left-1.5 bg-black/80 px-2 py-0.5 rounded border border-cyber-border text-[9px] font-mono text-cyber-green">
+                        <span id="cctv-cam-title" class="font-bold">CAM 01 // PLATFORM 4A</span>
+                    </div>
+
+                    <div class="absolute bottom-1.5 right-1.5 bg-black/80 px-2 py-0.5 rounded border border-cyber-border text-[9px] font-jetbrains text-cyber-amber" id="cctv-time">
+                        11:11:30
+                    </div>
+                </div>
+
+                <!-- CCTV Render Mode Controls -->
+                <div class="grid grid-cols-4 gap-1 text-[10px] font-mono">
+                    <button onclick="setCCTVMode('wire')" class="cctv-mode-btn tactical-btn py-1 font-bold text-cyber-cyan">WIREFRAME</button>
+                    <button onclick="setCCTVMode('thermal')" class="cctv-mode-btn tactical-btn py-1 font-bold">THERMAL</button>
+                    <button onclick="setCCTVMode('night')" class="cctv-mode-btn tactical-btn py-1 font-bold text-cyber-green">NIGHT-VIS</button>
+                    <button onclick="setCCTVMode('radar')" class="cctv-mode-btn tactical-btn py-1 font-bold text-cyber-amber">RADAR</button>
+                </div>
+
+                <!-- Camera Switch Buttons -->
+                <div class="grid grid-cols-4 gap-1 text-[10px] font-mono">
+                    <button onclick="switchCCTV(0)" class="cctv-cam-btn tactical-btn py-0.5 text-cyber-cyan border-cyber-cyan">CAM-1</button>
+                    <button onclick="switchCCTV(1)" class="cctv-cam-btn tactical-btn py-0.5">CAM-2</button>
+                    <button onclick="switchCCTV(2)" class="cctv-cam-btn tactical-btn py-0.5">CAM-3</button>
+                    <button onclick="switchCCTV(3)" class="cctv-cam-btn tactical-btn py-0.5">CAM-4</button>
+                </div>
+            </div>
+
+            <!-- PANEL 2: FILTERABLE EVENT LOG & COMMAND TERMINAL -->
+            <div class="cyber-panel p-3 flex-1 flex flex-col justify-between min-h-[260px]">
+                <div class="flex justify-between items-center border-b border-cyber-border pb-1.5">
+                    <span class="font-orbitron font-bold text-xs text-cyber-cyan tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-terminal text-cyber-cyan"></i>
+                        EVENT_STREAM_CONSOLE
+                    </span>
+                    
+                    <!-- Log Filter Buttons -->
+                    <div class="flex space-x-1 text-[9px] font-mono">
+                        <button onclick="filterLogs('ALL')" class="px-1.5 py-0.5 bg-cyber-border text-white rounded">ALL</button>
+                        <button onclick="filterLogs('WARN')" class="px-1.5 py-0.5 bg-cyber-amber/20 text-cyber-amber border border-cyber-amber/40 rounded">WARN</button>
+                        <button onclick="filterLogs('CRIT')" class="px-1.5 py-0.5 bg-cyber-magenta/20 text-cyber-magenta border border-cyber-magenta/40 rounded">CRIT</button>
+                    </div>
+                </div>
+
+                <!-- Scrollable Log Output -->
+                <div id="log-output" class="flex-1 my-2 overflow-y-auto space-y-1 font-jetbrains text-[10px] leading-tight pr-1">
+                    <!-- Logs dynamically appended -->
+                </div>
+
+                <!-- Command Prompt Form -->
+                <form onsubmit="handleCommand(event)" class="flex gap-1.5 border-t border-cyber-border pt-2">
+                    <span class="text-cyber-cyan font-bold font-mono text-sm">&gt;</span>
+                    <input type="text" id="cmd-input" placeholder="Type command ('help', 'halt', 'reroute', 'clear')..." autocomplete="off" class="flex-1 bg-[#040712] border border-cyber-border px-2 py-0.5 text-cyber-green text-xs font-mono focus:outline-none focus:border-cyber-cyan rounded-sm">
+                    <button type="submit" class="tactical-btn px-2 py-0.5 text-[10px] font-orbitron text-cyber-cyan">EXEC</button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        /* GLOBAL OS STATE & SYNTHESIZER */
+        let audioActive = false;
+        let audioCtx = null;
+        let crtEnabled = true;
+
+        /* WEB AUDIO SYNTHESIZER */
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        function toggleAudio() {
+            initAudio();
+            audioActive = !audioActive;
+            document.getElementById('audio-txt').innerText = audioActive ? "SFX: ON" : "SFX: OFF";
+            document.getElementById('audio-icon').className = audioActive ? "fa-solid fa-volume-high text-cyber-green" : "fa-solid fa-volume-xmark text-cyber-magenta";
+            if (audioActive) playSound(880, 0.08, 'sine');
+        }
+
+        function playSound(freq = 600, duration = 0.08, type = 'sine') {
+            if (!audioActive || !audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e){}
+        }
+
+        function toggleCRT() {
+            crtEnabled = !crtEnabled;
+            const layer = document.getElementById('crt-layer');
+            layer.style.display = crtEnabled ? 'block' : 'none';
+            playSound(crtEnabled ? 900 : 400, 0.05);
+        }
+
+        /* HARDWARE CONTROLS INTERACTIVE HANDLERS */
+        function toggleSafetyLid(lidId) {
+            const lid = document.getElementById(lidId);
+            lid.classList.toggle('open');
+            playSound(300, 0.12, 'triangle');
+            addLog("Safety cover interlock actuated.", "WARN");
+        }
+
+        function toggleSwitch(id, callback) {
+            const sw = document.getElementById(id);
+            sw.classList.toggle('active');
+            const isActive = sw.classList.contains('active');
+            playSound(isActive ? 700 : 350, 0.08, 'square');
+            if (callback) callback(isActive);
+        }
+
+        function onTrackPowerToggle(active) {
+            const status = active ? "3RD RAIL DE-ENERGIZED // POWER OFF" : "3RD RAIL POWER ONLINE // 750V";
+            addLog(status, active ? "CRIT" : "INFO");
+            document.getElementById('hdr-power-val').innerText = active ? "0V DC [OFFLINE]" : "750V DC [BALANCED]";
+            document.getElementById('hdr-power-val').className = active ? "text-cyber-magenta font-bold" : "text-cyber-amber font-bold";
+        }
+
+        function onInterlockToggle(active) {
+            document.getElementById('lbl-interlock').innerText = active ? "AUTO" : "MANUAL";
+            document.getElementById('lbl-interlock').className = active ? "text-[10px] text-cyber-green font-bold" : "text-[10px] text-cyber-amber font-bold";
+            addLog(`Signal interlock mode switched to ${active ? "AUTOMATIC" : "MANUAL OVERRIDE"}.`, "WARN");
+        }
+
+        function onPurgeToggle(active) {
+            document.getElementById('lbl-purge').innerText = active ? "ACTIVE" : "STANDBY";
+            document.getElementById('lbl-purge').className = active ? "text-[10px] text-cyber-cyan font-bold" : "text-[10px] text-cyber-amber font-bold";
+            addLog(`Tunnel exhaust purge fans ${active ? "ENGAGED" : "RETURNED TO STANDBY"}.`, "INFO");
+        }
+
+        let currentDialDegree = 0;
+        function rotateDial() {
+            currentDialDegree = (currentDialDegree + 90) % 360;
+            document.getElementById('rotary-pointer').style.transform = `rotate(${currentDialDegree}deg)`;
+            playSound(500, 0.06, 'sawtooth');
+
+            const modes = [
+                "MODE 1 // 600V ECO",
+                "MODE 2 // 750V REGULATED",
+                "MODE 3 // 850V BOOST",
+                "MODE 4 // EMERGENCY SHUNT"
+            ];
+            const modeIdx = currentDialDegree / 90;
+            document.getElementById('dial-mode-text').innerText = modes[modeIdx];
+            addLog(`Catenary voltage regulator set to ${modes[modeIdx]}`, "INFO");
+        }
+
+        function updateSpeedSlider(val) {
+            document.getElementById('slider-val').innerText = `${val} KM/H`;
+            playSound(600 + val * 3, 0.02);
+        }
+
+        function triggerEmergencyStop() {
+            playSound(150, 0.4, 'sawtooth');
+            addLog("EMERGENCY STOP (E-STOP) ACTIVATED! ALL TRAINS HOLDING BARS.", "CRIT");
+            document.getElementById('hdr-sys-status').innerText = "E-STOP HOLD";
+            document.getElementById('hdr-sys-status').className = "text-cyber-magenta font-bold tracking-wide";
+        }
+
+        function triggerSignalOverride() {
+            playSound(450, 0.15, 'square');
+            addLog("SIGNAL OVERRIDE AUTHORIZED BY COMMANDER.", "WARN");
+        }
+
+        function pingAllSignals() {
+            playSound(950, 0.08);
+            addLog("Pinged 48 signal junctions across 4 metro lines. Response: 100% OK.", "INFO");
+        }
+
+        /* VECTOR RAIL TOPOLOGY CANVAS ENGINE */
+        const railCanvas = document.getElementById('railCanvas');
+        const rCtx = railCanvas.getContext('2d');
+        let showGrid = true;
+
+        function resizeRailCanvas() {
+            railCanvas.width = railCanvas.parentElement.clientWidth;
+            railCanvas.height = railCanvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resizeRailCanvas);
+        resizeRailCanvas();
+
+        const lineColors = {
+            RED: "#ff0055",
+            CYAN: "#00f0ff",
+            YELLOW: "#ffaa00",
+            PURPLE: "#b026ff"
+        };
+
+        const stations = [
+            { id: "ST-01", name: "CENTRAL TERMINAL", x: 0.15, y: 0.50, color: "#00f0ff" },
+            { id: "ST-02", name: "NORTH PORT", x: 0.35, y: 0.20, color: "#ff0055" },
+            { id: "ST-03", name: "CYBER PLAZA", x: 0.65, y: 0.20, color: "#00f0ff" },
+            { id: "ST-04", name: "EAST DEPOT", x: 0.85, y: 0.50, color: "#b026ff" },
+            { id: "ST-05", name: "SOUTH LINK", x: 0.65, y: 0.80, color: "#ffaa00" },
+            { id: "ST-06", name: "WEST HARBOR", x: 0.35, y: 0.80, color: "#ff0055" }
+        ];
+
+        let trainFleet = [
+            { id: "T-101", line: "RED", lineIdx: 0, progress: 0.05, speed: 0.0012, status: "NOMINAL", color: lineColors.RED, passengers: 120 },
+            { id: "T-102", line: "RED", lineIdx: 0, progress: 0.55, speed: 0.0010, status: "NOMINAL", color: lineColors.RED, passengers: 84 },
+            { id: "T-201", line: "CYAN", lineIdx: 1, progress: 0.20, speed: 0.0015, status: "NOMINAL", color: lineColors.CYAN, passengers: 210 },
+            { id: "T-202", line: "CYAN", lineIdx: 1, progress: 0.70, speed: 0.0014, status: "NOMINAL", color: lineColors.CYAN, passengers: 140 },
+            { id: "T-301", line: "YELLOW", lineIdx: 2, progress: 0.35, speed: 0.0009, status: "HOLD", color: lineColors.YELLOW, passengers: 65 },
+            { id: "T-401", line: "PURPLE", lineIdx: 3, progress: 0.80, speed: 0.0018, status: "EXPRESS", color: lineColors.PURPLE, passengers: 175 }
+        ];
+
+        function renderRailMap() {
+            const w = railCanvas.width;
+            const h = railCanvas.height;
+            rCtx.clearRect(0, 0, w, h);
+
+            // Optional Grid
+            if (showGrid) {
+                rCtx.strokeStyle = '#0a1224';
+                rCtx.lineWidth = 1;
+                for(let x = 0; x < w; x += 30) {
+                    rCtx.beginPath(); rCtx.moveTo(x, 0); rCtx.lineTo(x, h); rCtx.stroke();
+                }
+                for(let y = 0; y < h; y += 30) {
+                    rCtx.beginPath(); rCtx.moveTo(0, y); rCtx.lineTo(w, y); rCtx.stroke();
+                }
+            }
+
+            const coords = stations.map(s => ({ ...s, px: s.x * w, py: s.y * h }));
+
+            // Vector Polygon Track Outline
+            rCtx.beginPath();
+            rCtx.strokeStyle = '#14203b';
+            rCtx.lineWidth = 8;
+            rCtx.moveTo(coords[0].px, coords[0].py);
+            for(let i = 1; i < coords.length; i++) rCtx.lineTo(coords[i].px, coords[i].py);
+            rCtx.closePath();
+            rCtx.stroke();
+
+            // Glowing Vector Tracks
+            rCtx.beginPath();
+            rCtx.strokeStyle = 'rgba(0, 240, 255, 0.6)';
+            rCtx.lineWidth = 2;
+            rCtx.setLineDash([8, 6]);
+            rCtx.moveTo(coords[0].px, coords[0].py);
+            for(let i = 1; i < coords.length; i++) rCtx.lineTo(coords[i].px, coords[i].py);
+            rCtx.closePath();
+            rCtx.stroke();
+            rCtx.setLineDash([]);
+
+            // Draw Station Nodes
+            coords.forEach(st => {
+                rCtx.beginPath();
+                rCtx.arc(st.px, st.py, 7, 0, Math.PI * 2);
+                rCtx.fillStyle = '#03050c';
+                rCtx.fill();
+                rCtx.strokeStyle = st.color;
+                rCtx.lineWidth = 2.5;
+                rCtx.stroke();
+
+                rCtx.font = '10px Orbitron';
+                rCtx.fillStyle = '#8396c2';
+                rCtx.fillText(st.name, st.px - 35, st.py + 20);
+            });
+
+            // Train Motions
+            const numSegs = coords.length;
+            trainFleet.forEach(t => {
+                if (t.status !== "HOLD") {
+                    t.progress = (t.progress + t.speed) % 1;
+                }
+
+                const totalProg = t.progress * numSegs;
+                const segIdx = Math.floor(totalProg);
+                const segProg = totalProg - segIdx;
+
+                const p1 = coords[segIdx];
+                const p2 = coords[(segIdx + 1) % numSegs];
+
+                const tx = p1.px + (p2.px - p1.px) * segProg;
+                const ty = p1.py + (p2.py - p1.py) * segProg;
+
+                // Train Vector Icon
+                rCtx.shadowColor = t.color;
+                rCtx.shadowBlur = 10;
+                rCtx.fillStyle = t.color;
+                rCtx.beginPath();
+                rCtx.arc(tx, ty, 6, 0, Math.PI * 2);
+                rCtx.fill();
+                rCtx.shadowBlur = 0;
+
+                rCtx.font = '10px JetBrains Mono';
+                rCtx.fillStyle = '#ffffff';
+                rCtx.fillText(t.id, tx + 10, ty - 4);
+            });
+
+            requestAnimationFrame(renderRailMap);
+        }
+
+        // Rail Map Interaction Click Inspector
+        railCanvas.addEventListener('click', (e) => {
+            const rect = railCanvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+            const w = railCanvas.width;
+            const h = railCanvas.height;
+
+            stations.forEach(st => {
+                const sx = st.x * w;
+                const sy = st.y * h;
+                if (Math.hypot(clickX - sx, clickY - sy) < 18) {
+                    openDrawerStation(st);
+                }
+            });
+        });
+
+        function openDrawerStation(st) {
+            playSound(700, 0.08);
+            document.getElementById('drawer-title').innerText = `STATION TELEMETRY // ${st.name}`;
+            document.getElementById('drawer-body').innerHTML = `
+                <div>STATION ID: <span class="text-white font-bold">${st.id}</span></div>
+                <div>PASSENGER DENSITY: <span class="text-cyber-amber font-bold">78%</span></div>
+                <div>AIR QUALITY: <span class="text-cyber-green font-bold">OPTIMAL</span></div>
+                <div>SIGNAL LOCK: <span class="text-cyber-green font-bold">ENGAGED</span></div>
+                <div>POWER FEED: <span class="text-white font-bold">750V DC</span></div>
+                <div>PLATFORM DOORS: <span class="text-cyber-cyan font-bold">CLOSED</span></div>
+            `;
+            const drawer = document.getElementById('inspector-drawer');
+            drawer.style.transform = 'translateY(0%)';
+        }
+
+        function closeDrawer() {
+            document.getElementById('inspector-drawer').style.transform = 'translateY(150%)';
+            playSound(400, 0.05);
+        }
+
+        function centerRailMap() {
+            resizeRailCanvas();
+            playSound(800, 0.05);
+        }
+
+        function toggleMapGrid() {
+            showGrid = !showGrid;
+            playSound(600, 0.05);
+        }
+
+        /* MULTI-MODE CCTV ENGINE */
+        const cctvCanvas = document.getElementById('cctvCanvas');
+        const cCtx = cctvCanvas.getContext('2d');
+        let cctvMode = 'wire';
+        let cctvCamIdx = 0;
+
+        const camTitles = [
+            "CAM 01 // PLATFORM 4A OVERCROWD",
+            "CAM 02 // TUNNEL SWITCH B-7",
+            "CAM 03 // MAIN PASSENGER HALL",
+            "CAM 04 // MAINTENANCE BAY 02"
+        ];
+
+        function resizeCCTV() {
+            cctvCanvas.width = cctvCanvas.parentElement.clientWidth;
+            cctvCanvas.height = cctvCanvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resizeCCTV);
+        resizeCCTV();
+
+        function setCCTVMode(mode) {
+            cctvMode = mode;
+            playSound(850, 0.05);
+            addLog(`CCTV view filter switched to '${mode.toUpperCase()}'.`, "INFO");
+        }
+
+        function switchCCTV(idx) {
+            cctvCamIdx = idx;
+            document.getElementById('cctv-cam-title').innerText = camTitles[idx];
+            playSound(750, 0.05);
+        }
+
+        function renderCCTV() {
+            const w = cctvCanvas.width;
+            const h = cctvCanvas.height;
+
+            cCtx.fillStyle = cctvMode === 'night' ? '#011206' : '#03050c';
+            cCtx.fillRect(0, 0, w, h);
+
+            const time = Date.now() * 0.003;
+            cCtx.lineWidth = 1.5;
+
+            if (cctvMode === 'wire') {
+                cCtx.strokeStyle = '#00f0ff';
+                for(let i = 1; i <= 6; i++) {
+                    const size = (i * 20 + time * 30) % 150;
+                    cCtx.strokeRect(w/2 - size, h/2 - size*0.5, size*2, size);
+                }
+            } else if (cctvMode === 'thermal') {
+                cCtx.fillStyle = '#ff0055';
+                cCtx.beginPath();
+                cCtx.arc(w*0.4 + Math.sin(time)*20, h*0.5, 30, 0, Math.PI*2);
+                cCtx.fill();
+            } else if (cctvMode === 'night') {
+                cCtx.strokeStyle = '#00ff66';
+                for(let x = 0; x < w; x += 20) {
+                    cCtx.beginPath(); cCtx.moveTo(x, 0); cCtx.lineTo(x, h); cCtx.stroke();
+                }
+            } else if (cctvMode === 'radar') {
+                cCtx.strokeStyle = '#ffaa00';
+                cCtx.beginPath();
+                cCtx.arc(w/2, h/2, (time*20) % (w/2), 0, Math.PI*2);
+                cCtx.stroke();
+            }
+
+            document.getElementById('cctv-time').innerText = new Date().toLocaleTimeString();
+            requestAnimationFrame(renderCCTV);
+        }
+
+        /* SVG POWER GAUGES ENGINE */
+        function drawGauge(canvasId, value, maxVal, color) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+            const cx = w / 2;
+            const cy = h / 2;
+            const r = 20;
+
+            ctx.clearRect(0, 0, w, h);
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0.75 * Math.PI, 2.25 * Math.PI);
+            ctx.strokeStyle = '#10172b';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            const pct = Math.min(Math.max(value / maxVal, 0), 1);
+            const endAngle = (0.75 + pct * 1.5) * Math.PI;
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0.75 * Math.PI, endAngle);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 4;
+            ctx.stroke();
+        }
+
+        function updateGauges() {
+            const g1 = (59.9 + Math.random()*0.2).toFixed(1);
+            const g2 = (0.74 + Math.random()*0.02).toFixed(2);
+            const g3 = (14.0 + Math.random()*0.5).toFixed(1);
+            const g4 = Math.floor(75 + Math.random()*6);
+
+            drawGauge('gauge1', g1, 70, '#00f0ff');
+            drawGauge('gauge2', g2, 1, '#00ff66');
+            drawGauge('gauge3', g3, 20, '#ffaa00');
+            drawGauge('gauge4', g4, 100, '#ff0055');
+
+            document.getElementById('g1-val').innerText = `${g1} Hz`;
+            document.getElementById('g2-val').innerText = `${g2} kV`;
+            document.getElementById('g3-val').innerText = `${g3} MW`;
+            document.getElementById('g4-val').innerText = `${g4} %`;
+        }
+        setInterval(updateGauges, 1500);
+
+        /* EVENT STREAM & TERMINAL */
+        const logOutput = document.getElementById('log-output');
+        let logStream = [];
+        let logFilter = 'ALL';
+
+        function addLog(msg, level = 'INFO') {
+            const entry = {
+                time: new Date().toLocaleTimeString(),
+                level,
+                msg
+            };
+            logStream.push(entry);
+            renderLogStream();
+        }
+
+        function renderLogStream() {
+            logOutput.innerHTML = '';
+            logStream.forEach(log => {
+                if (logFilter !== 'ALL' && log.level !== logFilter) return;
+
+                const line = document.createElement('div');
+                let color = "text-cyber-cyan";
+                if (log.level === 'WARN') color = "text-cyber-amber font-bold";
+                if (log.level === 'CRIT') color = "text-cyber-magenta font-bold";
+
+                line.className = `${color} leading-snug`;
+                line.innerHTML = `<span class="text-cyber-dim">[${log.time}]</span> <span class="text-white">[${log.level}]</span> ${log.msg}`;
+                logOutput.appendChild(line);
+            });
+            logOutput.scrollTop = logOutput.scrollHeight;
+        }
+
+        function filterLogs(lvl) {
+            logFilter = lvl;
+            playSound(900, 0.04);
+            renderLogStream();
+        }
+
+        function handleCommand(e) {
+            e.preventDefault();
+            const input = document.getElementById('cmd-input');
+            const cmd = input.value.trim().toLowerCase();
+            if (!cmd) return;
+
+            addLog(`> ${cmd}`, 'INFO');
+            playSound(750, 0.05);
+
+            if (cmd === 'help') {
+                addLog("COMMANDS: 'help', 'halt', 'reroute', 'clear', 'status'", "INFO");
+            } else if (cmd === 'clear') {
+                logStream = [];
+                renderLogStream();
+            } else if (cmd === 'halt') {
+                triggerEmergencyStop();
+            } else if (cmd === 'status') {
+                addLog("SYSTEM STATUS: 99.8% OPTIMAL // NO CRITICAL ALERTS", "INFO");
+            } else {
+                addLog(`UNRECOGNIZED COMMAND: '${cmd}'`, "WARN");
+            }
+
+            input.value = '';
+        }
+
+        /* LIVE CLOCK & INIT */
+        function updateClock() {
+            document.getElementById('live-clock').innerText = new Date().toLocaleTimeString();
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        window.onload = function() {
+            // Initializing SCADA Logs
+            addLog("Metro Commander SCADA OS v5.0 Kernel Online.", "INFO");
+            addLog("Sector 07 Vector Grid maps initialized.", "INFO");
+            addLog("Hardware Switchboard Interlocks & Telemetry Synced.", "INFO");
+
+            resizeRailCanvas();
+            resizeCCTV();
+            renderRailMap();
+            renderCCTV();
+            updateGauges();
+        };
+    </script>
+</body>
+</html>
