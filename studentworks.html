@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>歷史沿革與作品展示 | 慈濟大學物理治療學系</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@300;400;500;600;700&family=Noto+Serif+TC:wght@400;600;700;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ivy: {
+                            crimson: '#6B1225',        // Primary Crimson
+                            crimsonDark: '#4A0C18',    // Dark Crimson
+                            gold: '#C5A059',           // Academic Gold
+                            goldLight: '#DFB96C',      
+                            goldBg: '#FBF8F1',         
+                            navy: '#1E2A38',           // Slate Navy
+                            navyDark: '#0D131A',       
+                            ivory: '#FAF8F5'          
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', '"Noto Serif TC"', 'serif'],
+                        cinzel: ['"Cinzel"', 'serif'],
+                        sans: ['Inter', '"Noto Sans TC"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Inter', "Noto Sans TC", sans-serif; background-color: #FAF8F5; color: #1E293B; }
+        h1, h2, h3 { font-family: 'Playfair Display', 'Noto Serif TC', serif; }
+        .crest-title { font-family: 'Cinzel', serif; letter-spacing: 0.12em; }
+        .academic-nav { background: rgba(13, 19, 26, 0.96); backdrop-filter: blur(12px); border-bottom: 2px solid #C5A059; }
+        .bg-ivy-pattern { background-color: #6B1225; background-image: radial-gradient(rgba(197, 160, 89, 0.18) 1px, transparent 1px); background-size: 28px 28px; }
+        .ivy-card { transition: all 0.35s ease; border: 1px solid rgba(226, 232, 240, 0.9); }
+        .ivy-card:hover { transform: translateY(-5px); box-shadow: 0 20px 30px -10px rgba(107, 18, 37, 0.12); border-color: #C5A059; }
+        .gold-border-quote { border-left: 4px solid #C5A059; }
+    </style>
+</head>
+<body class="antialiased text-slate-800 bg-ivy-ivory flex flex-col min-h-screen">
+
+    <!-- Top Institutional Bar -->
+    <div class="bg-ivy-navyDark text-slate-300 text-xs py-2 px-4 sm:px-8 border-b border-slate-800 flex flex-wrap justify-between items-center gap-2">
+        <div class="flex items-center space-x-4">
+            <span class="tracking-widest uppercase font-semibold text-ivy-gold"><i class="fa-solid fa-building-columns mr-1.5"></i> Tzu Chi University Medical Campus</span>
+            <span class="hidden md:inline text-slate-600">|</span>
+            <span class="hidden md:inline text-slate-400"><i class="fa-solid fa-location-dot mr-1 text-ivy-gold"></i> Hualien, Taiwan</span>
+        </div>
+        <div>
+            <a href="index.html" class="text-ivy-gold hover:underline font-bold"><i class="fa-solid fa-arrow-left mr-1"></i> 返回系所簡介首頁 (Home)</a>
+        </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 academic-nav shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-24">
+                
+                <a href="index.html" class="flex items-center space-x-4 group">
+                    <img src="graph/logo.png" alt="TCU PT Logo" class="h-12 w-auto" onerror="this.onerror=null; this.src='https://via.placeholder.com/50/6B1225/C5A059?text=PT'">
+                    <div class="border-l border-slate-700 pl-4 py-1">
+                        <div class="crest-title text-xs tracking-widest text-ivy-gold uppercase font-bold">Department of Physical Therapy</div>
+                        <div class="text-2xl font-bold font-serif text-white tracking-wide group-hover:text-ivy-gold transition">慈濟大學 物理治療學系</div>
+                    </div>
+                </a>
+
+                <nav class="hidden lg:flex items-center space-x-2 font-medium text-slate-200 text-sm">
+                    <a href="index.html" class="px-3.5 py-2 rounded hover:text-ivy-gold transition">系所首頁</a>
+                    <a href="studentworks.html" class="px-3.5 py-2 text-ivy-gold border-b-2 border-ivy-gold font-bold">發展歷史與作品展示</a>
+                    <a href="#emblem" class="px-3.5 py-2 rounded hover:text-ivy-gold transition">系徽設計作品</a>
+                    <a href="#timeline" class="px-3.5 py-2 rounded hover:text-ivy-gold transition">創系沿革</a>
+                </nav>
+
+                <div class="hidden lg:flex items-center space-x-3">
+                    <a href="index.html" class="border-2 border-ivy-gold bg-ivy-gold hover:bg-ivy-goldLight text-slate-950 font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded shadow-sm transition">
+                        <i class="fa-solid fa-house mr-1.5"></i> 返回首頁
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Banner -->
+    <section class="relative bg-ivy-pattern text-white border-b-4 border-ivy-gold py-16 sm:py-24 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="max-w-3xl space-y-4">
+                <div class="inline-flex items-center space-x-2 bg-ivy-navyDark/80 border border-ivy-gold/50 px-4 py-1 rounded-full text-ivy-gold text-xs font-semibold tracking-widest uppercase">
+                    <i class="fa-solid fa-landmark"></i>
+                    <span>Department Overview & History (page_id=57)</span>
+                </div>
+                <h1 class="text-3xl sm:text-5xl font-extrabold font-serif tracking-tight text-white">
+                    學系簡史與學生代表作品<br><span class="text-ivy-gold italic">Department History & Works</span>
+                </h1>
+                <p class="text-base sm:text-lg text-slate-200 font-light leading-relaxed gold-border-quote pl-4">
+                    記載自民國 97 年創系至今的重要紀事，以及展示代表系所人文精神之學生作品。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emblem Work Section -->
+    <section id="emblem" class="py-16 bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="bg-ivy-ivory p-8 rounded-2xl border-2 border-ivy-gold/50 shadow-xl text-center max-w-md w-full">
+                        <img src="graph/logo.png" alt="Department Emblem" class="w-48 h-48 mx-auto my-4 object-contain" onerror="this.onerror=null; this.src='https://via.placeholder.com/180/0D131A/C5A059?text=PT+EMBLEM'">
+                        <span class="inline-block bg-ivy-crimson text-white text-xs px-3 py-1 rounded-full font-bold uppercase tracking-widest my-2">
+                            學生作品設計者：101級 江奕璇 同學
+                        </span>
+                        <h3 class="text-2xl font-serif font-bold text-ivy-navy mt-1">慈濟大學物理治療學系 系徽</h3>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="border-l-4 border-ivy-crimson pl-4">
+                        <span class="text-ivy-crimson font-bold text-xs uppercase tracking-widest">Student Representative Work</span>
+                        <h2 class="text-3xl font-serif font-bold text-ivy-navy mt-1">系徽象徵：雙手守護與健康促進</h2>
+                    </div>
+                    <p class="text-slate-700 leading-relaxed text-sm">
+                        本系系徽為 101 級學生江奕璇同學之經典作品，意象包含「托舉的雙手」代表物理治療師的徒手治療與溫暖關懷，以及推動全球健康促進（Health Promotion）的永續使命。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Historical Timeline Section -->
+    <section id="timeline" class="py-20 bg-ivy-ivory">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="text-ivy-crimson font-bold text-xs uppercase tracking-widest">Historical Milestones</span>
+                <h2 class="text-3xl sm:text-4xl font-serif font-bold text-ivy-navy mt-1">創系重要里程碑 (Chronicle)</h2>
+                <div class="w-12 h-1 bg-ivy-gold mx-auto mt-3"></div>
+            </div>
+
+            <div class="max-w-4xl mx-auto space-y-6">
+                <div class="bg-white p-6 rounded-lg border border-slate-200 ivy-card">
+                    <span class="text-xs font-bold text-ivy-crimson bg-ivy-goldBg px-2.5 py-0.5 rounded border border-ivy-gold/30">民國 97 年 (2008)</span>
+                    <h3 class="text-lg font-serif font-bold text-ivy-navy mt-2 mb-1">教育部核准增設物理治療學系</h3>
+                    <p class="text-slate-600 text-xs leading-relaxed">獲教育部核准於慈濟大學設立物理治療學系，展開專業教學實驗室規劃與設備籌備。</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg border border-slate-200 ivy-card">
+                    <span class="text-xs font-bold text-ivy-crimson bg-ivy-goldBg px-2.5 py-0.5 rounded border border-ivy-gold/30">民國 98 年 (2009)</span>
+                    <h3 class="text-lg font-serif font-bold text-ivy-navy mt-2 mb-1">首屆招生與黃千惠副教授接任首任主任</h3>
+                    <p class="text-slate-600 text-xs leading-relaxed">首屆招生一班 45 名學生，全面導入 PBL（Problem-Based Learning）問題導向學習訓練。</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg border border-slate-200 ivy-card">
+                    <span class="text-xs font-bold text-ivy-crimson bg-ivy-goldBg px-2.5 py-0.5 rounded border border-ivy-gold/30">民國 101 年 (2012)</span>
+                    <h3 class="text-lg font-serif font-bold text-ivy-navy mt-2 mb-1">首度選派學生前往瑞典研習與辦理首屆授袍典禮</h3>
+                    <p class="text-slate-600 text-xs leading-relaxed">選派優秀學生前往瑞典 Halmstad University 研習一年，開展國際交流新頁。</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg border border-slate-200 ivy-card">
+                    <span class="text-xs font-bold text-ivy-crimson bg-ivy-goldBg px-2.5 py-0.5 rounded border border-ivy-gold/30">民國 104 年 (2015)</span>
+                    <h3 class="text-lg font-serif font-bold text-ivy-navy mt-2 mb-1">成立物理治療學系碩士班</h3>
+                    <p class="text-slate-600 text-xs leading-relaxed">增設碩士班首屆招生，同步成立教育部體育署「運動防護體系東區輔導中心」。</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg border border-slate-200 ivy-card">
+                    <span class="text-xs font-bold text-ivy-crimson bg-ivy-goldBg px-2.5 py-0.5 rounded border border-ivy-gold/30">民國 113 年 (2024)</span>
+                    <h3 class="text-lg font-serif font-bold text-ivy-navy mt-2 mb-1">歐秀中教授接任第四任主任與新南向/美國計畫</h3>
+                    <p class="text-slate-600 text-xs leading-relaxed">通過教育部新南向學海築夢計畫前往新加坡實習，並開展美國加州 Kindess 診所海外見習合作。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-ivy-navyDark text-slate-400 py-12 border-t-2 border-ivy-gold text-xs mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div>
+                    <div class="text-white font-serif font-bold text-base">慈濟大學 物理治療學系</div>
+                    <div class="text-[11px] text-slate-500">Department of Physical Therapy, Tzu Chi University</div>
+                </div>
+                <div class="text-center md:text-right space-y-1 text-slate-500">
+                    <p>© 2026 Tzu Chi University Department of Physical Therapy. All Rights Reserved.</p>
+                    <p>地址：970 花蓮市中央路三段701號 勤耕樓7樓 | 電話：(03)8565301 #12491</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
